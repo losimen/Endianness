@@ -4,7 +4,7 @@
 const int BASE_16 = 16;
 
 
-InfInt Pow(InfInt base, InfInt exponent) {
+InfInt Pow(const InfInt &base, const InfInt &exponent) {
     if (exponent == 0)
         return 1;
     else if (exponent < 0)
@@ -103,27 +103,108 @@ InfInt Hex2LittleEndian(const std::string &hexNumber) {
     return result;
 }
 
+
+std::string BigEndian2Hex(InfInt myNum) {
+    std::string hexStr;
+    std::string resultHex;
+
+    while (myNum != 0)
+    {
+        std::stringstream stream;
+
+        stream << std::hex << myNum%16;
+        myNum /= 16;
+
+        hexStr += stream.str();
+    }
+
+    std::transform(hexStr.begin(), hexStr.end(), hexStr.begin(), ::toupper);
+    std::reverse(hexStr.begin(), hexStr.end());
+
+    return hexStr;
+}
+
+
+std::string LittleEndian2Hex(InfInt myNum, int numberOfBytes) {
+    std::string hexStr;
+
+    while (myNum != 0)
+    {
+        std::stringstream stream;
+
+        stream << std::hex << myNum%16;
+        myNum /= 16;
+
+        hexStr += stream.str();
+    }
+
+    std::transform(hexStr.begin(), hexStr.end(), hexStr.begin(), ::toupper);
+    std::reverse(hexStr.begin(), hexStr.end());
+
+    hexStr += std::string((numberOfBytes*2 - hexStr.length()), '0');
+
+    return hexStr;
+}
+
+
 int main() {
     std::string vector_1 = "ff00000000000000000000000000000000000000000000000000000000000000";
     std::string vector_2 = "aaaa000000000000000000000000000000000000000000000000000000000000";
     std::string vector_3 = "FFFFFFFF";
     std::string vector_4 = "F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
-    std::cout << "1- Big-endian: " << Hex2BigEndian(vector_1) << std::endl;
-    std::cout << "1- Little-endian: " << Hex2LittleEndian(vector_1) << std::endl;
+    // **********************************************
+    // ************** hex 2 endianness **************
+    // **********************************************
+    std::cout  << std::endl << "HEX 2 ENDIANNESS" << std::endl;
+
+    InfInt vec_little_1 = Hex2LittleEndian(vector_1);
+    InfInt vec_big_1 = Hex2BigEndian(vector_1);
+
+    InfInt vec_little_2 = Hex2LittleEndian(vector_2);
+    InfInt vec_big_2 = Hex2BigEndian(vector_2);
+
+    InfInt vec_little_3 = Hex2LittleEndian(vector_3);
+    InfInt vec_big_3 = Hex2BigEndian(vector_3);
+
+    InfInt vec_little_4 = Hex2LittleEndian(vector_4);
+    InfInt vec_big_4 = Hex2BigEndian(vector_4);
+
+    std::cout << "1- Little-endian: " << vec_little_1 << std::endl;
+    std::cout << "1- Big-endian: " << vec_big_1 << std::endl;
     std::cout << std::endl;
 
-    std::cout << "2- Big-endian: " << Hex2BigEndian(vector_2) << std::endl;
-    std::cout << "2- Little-endian: " << Hex2LittleEndian(vector_2) << std::endl;
+    std::cout << "2- Little-endian: " << vec_little_2 << std::endl;
+    std::cout << "2- Big-endian: " << vec_big_2 << std::endl;
     std::cout << std::endl;
 
-    std::cout << "3- Big-endian: " << Hex2BigEndian(vector_3) << std::endl;
-    std::cout << "3- Little-endian: " << Hex2LittleEndian(vector_3) << std::endl;
+    std::cout << "3- Little-endian: " << vec_little_3 << std::endl;
+    std::cout << "3- Big-endian: " << vec_big_3 << std::endl;
     std::cout << std::endl;
 
-    std::cout << "4- Big-endian: " << Hex2BigEndian(vector_4) << std::endl;
-    std::cout << "4- Little-endian: " << Hex2LittleEndian(vector_4) << std::endl;
+    std::cout << "4- Little-endian: " << vec_little_4 << std::endl;
+    std::cout << "4- Big-endian: " << vec_big_4 << std::endl;
     std::cout << std::endl;
+
+    // **********************************************
+    // ************** endianness 2 hex   **************
+    // **********************************************
+    std::cout  << std::endl << "ENDIANNESS 2 HEX" << std::endl;
+
+    std::cout << "Little-endian: " << LittleEndian2Hex(vec_little_1, 32) << std::endl;
+    std::cout << "Big-endian: " << BigEndian2Hex(vec_big_1) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Little-endian: " << LittleEndian2Hex(vec_little_2, 32) << std::endl;
+    std::cout << "Big-endian: " << BigEndian2Hex(vec_big_2) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Little-endian: " << LittleEndian2Hex(vec_little_3, 4) << std::endl;
+    std::cout << "Big-endian: " << BigEndian2Hex(vec_big_3) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Little-endian: " << LittleEndian2Hex(vec_little_4, 512) << std::endl;
+    std::cout << "Big-endian: " << BigEndian2Hex(vec_big_4) << std::endl;
 
     return 0;
 }
