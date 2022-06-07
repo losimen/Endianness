@@ -3,4 +3,4 @@ project(Endianness)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Endianness main.cpp Endianness.h)
+add_library(Endianness main.cpp Endianness.h)
